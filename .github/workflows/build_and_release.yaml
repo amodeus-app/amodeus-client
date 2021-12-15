@@ -1,0 +1,47 @@
+name: Build & prepare release
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    name: Build APK and web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: '11'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: 'beta'
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Restore cached dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            pub-
+      - name: Get Flutter dependencies
+        run: flutter pub get
+      - name: Build app for Android
+        run: flutter build apk
+      - name: Build app for web
+        run: flutter build web
+      - name: Publish web on GitHub pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          cname: web.amodeus.evgfilim1.me
+          publish_dir: build/web
+      - name: Draft a release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          draft: true
+          files: |
+            build/app/outputs/flutter-apk/app-*.apk

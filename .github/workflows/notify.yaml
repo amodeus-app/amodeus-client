@@ -1,0 +1,21 @@
+name: Publish web & notify about release
+on:
+  release:
+    types:
+      - published
+jobs:
+  telegram:
+    name: Send Telegram notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send a Telegram notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: "@amodeus_app"
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            <b>A new version <i>${{ github.event.release.tag_name }}</i> has just been released!</b>
+
+            ${{ github.event.release.body }}
+
+            <a href="${{ github.server_url }}/${{ github.repository }}/releases/${{ github.event.release.tag_name }}">Download</a>
