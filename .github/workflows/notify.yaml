@@ -1,4 +1,4 @@
-name: Publish web & notify about release
+name: Notify about release
 on:
   release:
     types:
@@ -8,14 +8,18 @@ jobs:
     name: Send Telegram notification
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
       - name: Send a Telegram notification
-        uses: appleboy/telegram-action@master
+        uses: ./.github/actions/telegram-send-message
         with:
-          to: "@amodeus_app"
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            <b>A new version <i>${{ github.event.release.tag_name }}</i> has just been released!</b>
+          chat_id: "@amodeus_app"
+          text: >
+            <b>A new version <i>${{ github.event.release.tag_name }}</i> of <i>${{ github.repository }}</i> has just
+            been released!</b>
 
-            ${{ github.event.release.body }}
 
-            <a href="${{ github.server_url }}/${{ github.repository }}/releases/${{ github.event.release.tag_name }}">Download</a>
+            You can view full changelog and downloads at
+            <a href="${{ github.server_url }}/${{ github.repository }}/releases/${{ github.event.release.tag_name }}">GitHub</a>.
+          parse_mode: HTML

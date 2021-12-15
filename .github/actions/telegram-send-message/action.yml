@@ -1,0 +1,47 @@
+name: 'Send a Telegram message'
+description: Send a Telegram message via Telegram Bot API
+inputs:
+  token:
+    description: Telegram bot token
+    required: true
+  chat_id:
+    description: Target chat ID
+    required: true
+  text:
+    description: Text to send
+    required: true
+  parse_mode:
+    description: Text parse mode
+    required: false
+    default: ""
+outputs:
+  message_id:
+    description: Sent message ID
+    value: ${{ steps.send-message.outputs.message_id }}
+runs:
+  using: composite
+  steps:
+    - name: Set token masking
+      run: echo "::add-mask::${{ inputs.token }}"
+      shell: bash
+    - name: Install dependencies
+      run: sudo apt install curl jq
+      shell: bash
+    - name: Send a message
+      id: send-message
+      run: >
+        jq
+        --arg chat_id '${{ inputs.chat_id }}'
+        --arg text '${{ inputs.text }}'
+        --arg parse_mode ${{ inputs.parse_mode }}
+        -Rnc '$ARGS.named'
+        | curl
+        -s -X POST
+        -d '@-'
+        -H "Content-Type: application/json"
+        https://api.telegram.org/bot${{ inputs.token }}/sendMessage -o /tmp/answer.json
+
+        jq -e '.ok' /tmp/answer.json >/dev/null
+        && echo "::set-output name=message_id::$(jq '.result.message_id' /tmp/answer.json)"
+        || { echo "::error::$(jq '.description' /tmp/answer.json)"; exit 1; }
+      shell: bash
