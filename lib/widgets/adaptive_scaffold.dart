@@ -7,10 +7,6 @@ bool _isLargeScreen(BuildContext context) {
   return MediaQuery.of(context).size.width >= 1240.0;
 }
 
-bool _isMediumScreen(BuildContext context) {
-  return MediaQuery.of(context).size.width >= 960.0;
-}
-
 class AdaptiveScaffoldDestination {
   final String title;
   final IconData? icon;
@@ -28,21 +24,18 @@ class AdaptiveScaffoldDestination {
 }
 
 /// A widget that adapts to the current display size, displaying a [Drawer],
-/// [NavigationRail], or [BottomNavigationBar]. Navigation destinations are
-/// defined in the [destinations] parameter.
+/// or [BottomNavigationBar]. Navigation destinations are defined in the [destinations] parameter.
 class AdaptiveScaffold extends StatefulWidget {
   final List<Widget> actions;
   final int currentIndex;
   final List<AdaptiveScaffoldDestination> destinations;
-  final ValueChanged<int> onNavigationIndexChange;
   final FloatingActionButton? floatingActionButton;
 
   const AdaptiveScaffold({
     Key? key,
     this.actions = const [],
-    required this.currentIndex,
+    this.currentIndex = 0,
     required this.destinations,
-    required this.onNavigationIndexChange,
     this.floatingActionButton,
   }) : super(key: key);
 
@@ -51,10 +44,25 @@ class AdaptiveScaffold extends StatefulWidget {
 }
 
 class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
+  final _stackKey = UniqueKey();
+  var _i = 0;
+
+  @override
+  void initState() {
+    _i = widget.currentIndex;
+    super.initState();
+  }
+
+  IndexedStack _getStack() => IndexedStack(
+        key: _stackKey,
+        index: _i,
+        children: widget.destinations.map((e) => e.body).toList(),
+      );
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeNotifier>(context);
-    final currentDestination = widget.destinations[widget.currentIndex];
+    final currentDestination = widget.destinations[_i];
 
     // Show a Drawer
     if (_isLargeScreen(context)) {
@@ -90,7 +98,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   title: Text(currentDestination.title),
                   actions: (currentDestination.actions ?? []) + widget.actions,
                 ),
-                body: currentDestination.body,
+                body: _getStack(),
                 floatingActionButton:
                     widget.floatingActionButton ?? currentDestination.floatingActionButton,
               ),
@@ -103,7 +111,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     // Show a bottom app bar
     return SafeArea(
       child: Scaffold(
-        body: currentDestination.body,
+        body: _getStack(),
         appBar: AppBar(
           title: Text(currentDestination.title),
           actions: (currentDestination.actions ?? []) + widget.actions,
@@ -117,10 +125,10 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               ),
             ),
           ],
-          currentIndex: widget.currentIndex,
+          currentIndex: _i,
           onTap: (i) {
-            if (i != widget.currentIndex) {
-              widget.onNavigationIndexChange(i);
+            if (i != _i) {
+              _changeScreen(i);
             }
           },
           landscapeLayout: BottomNavigationBarLandscapeLayout.linear,
@@ -134,7 +142,13 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   void _destinationTapped(AdaptiveScaffoldDestination destination) {
     var idx = widget.destinations.indexOf(destination);
     if (idx != widget.currentIndex) {
-      widget.onNavigationIndexChange(idx);
+      _changeScreen(idx);
     }
+  }
+
+  void _changeScreen(int i) {
+    setState(() {
+      _i = i;
+    });
   }
 }

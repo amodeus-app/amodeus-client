@@ -7,6 +7,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../screens/login.dart';
 import '../utils/storage.dart' as storage;
 import '../utils/theme.dart';
 import '../widgets/debug_dialog.dart';
@@ -104,7 +105,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: "Аккаунт",
           subtitle: "Вход не выполнен",
           enabled: kDebugMode,
-          onTap: () => Navigator.pushNamed(context, "/login"),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          ),
         ),
         SettingsSwitchTile(
           title: "При запуске показывать",
@@ -137,9 +141,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           context: context,
           icon: Icons.info,
           title: "О программе",
-          subtitle: "amodeus_client 0.1.0-alpha.0",
+          subtitle: "amodeus_client 0.1.0-alpha.1",
           appName: "amodeus_client",
-          appVersion: "0.1.0-alpha.0+1",
+          appVersion: "0.1.0-alpha.1 build 2",
           appIcon: const Icon(Icons.accessible_forward, size: 48.0),
           children: <Widget>[
             Text.rich(

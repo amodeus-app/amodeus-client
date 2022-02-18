@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
 
-import '../utils/destinations.dart';
 import '../utils/storage.dart' as storage;
 
 class LockScreen extends StatefulWidget {
-  const LockScreen({Key? key}) : super(key: key);
+  final VoidCallback onUnlocked;
+
+  const LockScreen({
+    Key? key,
+    required this.onUnlocked,
+  }) : super(key: key);
 
   @override
   _LockScreenState createState() => _LockScreenState();
@@ -19,7 +23,7 @@ class _LockScreenState extends State<LockScreen> {
     setState(() {
       _authRequired = false;
     });
-    Navigator.popAndPushNamed(context, homeDestination.path);
+    widget.onUnlocked();
   }
 
   @override
@@ -28,6 +32,8 @@ class _LockScreenState extends State<LockScreen> {
     storage.isAuthEnabled().then((value) {
       if (!value) {
         _continue();
+      } else {
+        _doAuth();
       }
       setState(() {
         _authRequired = value;
@@ -53,7 +59,6 @@ class _LockScreenState extends State<LockScreen> {
   @override
   Widget build(BuildContext context) {
     if (_authRequired == true) {
-      _doAuth();
       return Center(
         child: TextButton.icon(
           icon: const Icon(Icons.lock),
