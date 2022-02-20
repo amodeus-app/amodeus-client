@@ -2,13 +2,14 @@
 
 Alternative MODEUS app for UTMN Students.
 
-**DISCLAIMER:** THIS APP IS IN WORK IN PROGRESS, EVERYTHING CAN CHANGE OR
+**DISCLAIMER:** THIS APP IS WORK IN PROGRESS, EVERYTHING CAN CHANGE OR
 BREAK ANY TIME. USE IT AT YOUR OWN RISK.
 
 ## Features
   - Get timetable of any user without logging in
   - Dark and light theme
   - In-app authentication via system password or fingerprint
+  - Available for multiple platforms
   - Bugs
 
 ## Installation
@@ -21,22 +22,21 @@ BREAK ANY TIME. USE IT AT YOUR OWN RISK.
     Where `<flavor>` is one of:
     - `apk` — build Android app
     - `web` — build web app
+  
+### Via GitHub
 
-## Usage
-  - Navigate to https://api.amodeus.evgfilim1.me/docs
-  - Select `/search`
-  - Click "Try it out"
-  - Enter your full name and click "Execute"
-  - Copy your ID (should look like 11223344-5566-7788-9900-aabbccddeeff)
-  - Start an app, navigate to settings
-  - Long tap on "О программе"
-  - Paste your ID into "personUuid" field, then press Enter
+  - Navigate to [Releases](https://github.com/evgfilim1/amodeus-client/releases/)
+  - Choose one which you want to download
+  - Click on Assets, download and install `app-release.apk` file
 
 ## Roadmap
   - [x] Dark/Light theme
-  - [x] Get timetable for any user (partially implemented)
-  - [ ] Search user
+  - [x] Get timetable for any user
+  - [x] Search user
   - [ ] Login
     - [ ] Get timetable for self
     - [ ] Get marks for self
+  - [ ] Upcoming lesson reminder/alarm
+  - [ ] Home screen widgets
+  - [ ] Subscribe to timetable changes
   - [ ] Other features coming soon...
