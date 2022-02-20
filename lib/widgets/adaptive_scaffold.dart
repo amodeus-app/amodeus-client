@@ -9,17 +9,13 @@ bool _isLargeScreen(BuildContext context) {
 
 class AdaptiveScaffoldDestination {
   final String title;
-  final IconData? icon;
+  final IconData icon;
   final Widget body;
-  final FloatingActionButton? floatingActionButton;
-  final List<Widget>? actions;
 
   const AdaptiveScaffoldDestination({
     required this.title,
-    this.icon,
+    required this.icon,
     required this.body,
-    this.floatingActionButton,
-    this.actions,
   });
 }
 
@@ -62,7 +58,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeNotifier>(context);
-    final currentDestination = widget.destinations[_i];
 
     // Show a Drawer
     if (_isLargeScreen(context)) {
@@ -79,7 +74,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                   ),
                   for (var d in widget.destinations)
                     ListTile(
-                      leading: Icon(d.icon!),
+                      leading: Icon(d.icon),
                       title: Text(d.title),
                       selected: widget.destinations.indexOf(d) == widget.currentIndex,
                       onTap: () => _destinationTapped(d),
@@ -94,13 +89,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             ),
             Expanded(
               child: Scaffold(
-                appBar: AppBar(
-                  title: Text(currentDestination.title),
-                  actions: (currentDestination.actions ?? []) + widget.actions,
-                ),
                 body: _getStack(),
-                floatingActionButton:
-                    widget.floatingActionButton ?? currentDestination.floatingActionButton,
               ),
             ),
           ],
@@ -112,15 +101,11 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     return SafeArea(
       child: Scaffold(
         body: _getStack(),
-        appBar: AppBar(
-          title: Text(currentDestination.title),
-          actions: (currentDestination.actions ?? []) + widget.actions,
-        ),
         bottomNavigationBar: BottomNavigationBar(
           items: [
             ...widget.destinations.map(
               (d) => BottomNavigationBarItem(
-                icon: Icon(d.icon!),
+                icon: Icon(d.icon),
                 label: d.title,
               ),
             ),
@@ -133,8 +118,6 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           },
           landscapeLayout: BottomNavigationBarLandscapeLayout.linear,
         ),
-        floatingActionButton:
-            widget.floatingActionButton ?? currentDestination.floatingActionButton,
       ),
     );
   }

@@ -98,71 +98,76 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeNotifier>(context);
-    return ListView(
-      children: <SettingsTile>[
-        SettingsTile(
-          icon: Icons.account_circle,
-          title: "Аккаунт",
-          subtitle: "Вход не выполнен",
-          enabled: kDebugMode,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-          ),
-        ),
-        SettingsSwitchTile(
-          title: "При запуске показывать",
-          subtitle: _weekView ? "Расписание на неделю" : "Расписание на сегодня",
-          value: _weekView,
-          onTap: _toggleWeekView,
-        ),
-        SettingsDialogTile(
-          context: context,
-          icon: Icons.color_lens,
-          title: "Тема",
-          subtitle: theme.isSystem ? "Системная" : (theme.isDark ? "Тёмная" : "Светлая"),
-          options: <SettingsDialogOption>[
-            SettingsDialogOption(text: "Системная", onTap: () => _onThemeItemTap(null)),
-            SettingsDialogOption(text: "Светлая", onTap: () => _onThemeItemTap(false)),
-            SettingsDialogOption(text: "Тёмная", onTap: () => _onThemeItemTap(true)),
-          ],
-        ),
-        SettingsSwitchTile(
-          icon: Icons.security,
-          title: "Защита приложения",
-          subtitle: _authAvailable == false
-              ? "Недоступно на вашем устройстве"
-              : "С помощью отпечатка или пароля",
-          value: _authEnabled,
-          onTap: _toggleAuth,
-          enabled: _authAvailable ?? false,
-        ),
-        SettingsAboutTile(
-          context: context,
-          icon: Icons.info,
-          title: "О программе",
-          subtitle: "amodeus_client 0.1.0-alpha.1",
-          appName: "amodeus_client",
-          appVersion: "0.1.0-alpha.1 build 2",
-          appIcon: const Icon(Icons.accessible_forward, size: 48.0),
-          children: <Widget>[
-            Text.rich(
-              TextSpan(
-                text: "Альтернативный клиент MODEUS для студентов ТюмГУ. Made with 💔 by ",
-                children: [
-                  TextSpan(
-                    text: "@evgfilim1",
-                    style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-                    recognizer: _launchUrlOnTap("https://evgfilim1.me/"),
-                  ),
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Настройки"),
+      ),
+      body: ListView(
+        children: <SettingsTile>[
+          SettingsTile(
+            icon: Icons.account_circle,
+            title: "Аккаунт",
+            subtitle: "Вход не выполнен",
+            enabled: kDebugMode,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
             ),
-          ],
-          onLongPress: () =>
-              showDialog(context: context, builder: (context) => const DebugDialog()),
-        ),
-      ],
+          ),
+          SettingsSwitchTile(
+            title: "При запуске показывать",
+            subtitle: _weekView ? "Расписание на неделю" : "Расписание на сегодня",
+            value: _weekView,
+            onTap: _toggleWeekView,
+          ),
+          SettingsDialogTile(
+            context: context,
+            icon: Icons.color_lens,
+            title: "Тема",
+            subtitle: theme.isSystem ? "Системная" : (theme.isDark ? "Тёмная" : "Светлая"),
+            options: <SettingsDialogOption>[
+              SettingsDialogOption(text: "Системная", onTap: () => _onThemeItemTap(null)),
+              SettingsDialogOption(text: "Светлая", onTap: () => _onThemeItemTap(false)),
+              SettingsDialogOption(text: "Тёмная", onTap: () => _onThemeItemTap(true)),
+            ],
+          ),
+          SettingsSwitchTile(
+            icon: Icons.security,
+            title: "Защита приложения",
+            subtitle: _authAvailable == false
+                ? "Недоступно на вашем устройстве"
+                : "С помощью отпечатка или пароля",
+            value: _authEnabled,
+            onTap: _toggleAuth,
+            enabled: _authAvailable ?? false,
+          ),
+          SettingsAboutTile(
+            context: context,
+            icon: Icons.info,
+            title: "О программе",
+            subtitle: "amodeus_client 0.1.0-alpha.1",
+            appName: "amodeus_client",
+            appVersion: "0.1.0-alpha.1 build 2",
+            appIcon: const Icon(Icons.accessible_forward, size: 48.0),
+            children: <Widget>[
+              Text.rich(
+                TextSpan(
+                  text: "Альтернативный клиент MODEUS для студентов ТюмГУ. Made with 💔 by ",
+                  children: [
+                    TextSpan(
+                      text: "@evgfilim1",
+                      style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                      recognizer: _launchUrlOnTap("https://evgfilim1.me/"),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            onLongPress: () =>
+                showDialog(context: context, builder: (context) => const DebugDialog()),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -175,86 +175,91 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: RefreshIndicator(
-        key: _refresh,
-        child: SfCalendar(
-          view: CalendarView.day,
-          controller: _controller,
-          firstDayOfWeek: DateTime.monday,
-          monthViewSettings: const MonthViewSettings(
-            showAgenda: true,
-            numberOfWeeksInView: 4,
-            appointmentDisplayCount: 4,
-            dayFormat: "E",
-            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Расписание"),
+      ),
+      body: WillPopScope(
+        child: RefreshIndicator(
+          key: _refresh,
+          child: SfCalendar(
+            view: CalendarView.day,
+            controller: _controller,
+            firstDayOfWeek: DateTime.monday,
+            monthViewSettings: const MonthViewSettings(
+              showAgenda: true,
+              numberOfWeeksInView: 4,
+              appointmentDisplayCount: 4,
+              dayFormat: "E",
+              appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+            ),
+            timeSlotViewSettings: const TimeSlotViewSettings(
+              startHour: 8,
+              endHour: 22,
+              nonWorkingDays: <int>[DateTime.sunday],
+              minimumAppointmentDuration: lessonDuration,
+              timeInterval: Duration(minutes: 30),
+              timeFormat: "HH:mm",
+              timeIntervalHeight: 30,
+              dayFormat: "E",
+            ),
+            allowedViews: const <CalendarView>[
+              CalendarView.day,
+              CalendarView.workWeek,
+              CalendarView.week,
+              CalendarView.month,
+            ],
+            showNavigationArrow: true,
+            showDatePickerButton: true,
+            allowViewNavigation: true,
+            appointmentBuilder: _appointmentBuilder,
+            timeZone: "Asia/Yekaterinburg",
+            onViewChanged: (details) {
+              _currentProgress = _getTimetable(
+                details.visibleDates.first,
+                details.visibleDates.last.add(const Duration(days: 1)),
+                force: false,
+              ).then((_) {
+                _currentProgress = null;
+              });
+            },
+            specialRegions: defaultNonWorkingDays + defaultTimetableBreaks,
+            dataSource: LessonDataSource(_lessons),
+            onTap: (details) {
+              if (details.targetElement == CalendarElement.appointment) {
+                _onElementClick(context, details.appointments?.first);
+                return;
+              }
+              // debugPrint(details.targetElement.toString());
+              // debugPrint(details.date?.toString());
+              // debugPrint(details.appointments?.toString());
+            },
           ),
-          timeSlotViewSettings: const TimeSlotViewSettings(
-            startHour: 8,
-            endHour: 22,
-            nonWorkingDays: <int>[DateTime.sunday],
-            minimumAppointmentDuration: lessonDuration,
-            timeInterval: Duration(minutes: 30),
-            timeFormat: "HH:mm",
-            timeIntervalHeight: 30,
-            dayFormat: "E",
-          ),
-          allowedViews: const <CalendarView>[
-            CalendarView.day,
-            CalendarView.workWeek,
-            CalendarView.week,
-            CalendarView.month,
-          ],
-          showNavigationArrow: true,
-          showDatePickerButton: true,
-          allowViewNavigation: true,
-          appointmentBuilder: _appointmentBuilder,
-          timeZone: "Asia/Yekaterinburg",
-          onViewChanged: (details) {
-            _currentProgress = _getTimetable(
-              details.visibleDates.first,
-              details.visibleDates.last.add(const Duration(days: 1)),
-              force: false,
-            ).then((_) {
-              _currentProgress = null;
-            });
-          },
-          specialRegions: defaultNonWorkingDays + defaultTimetableBreaks,
-          dataSource: LessonDataSource(_lessons),
-          onTap: (details) {
-            if (details.targetElement == CalendarElement.appointment) {
-              _onElementClick(context, details.appointments?.first);
-              return;
+          onRefresh: () {
+            // returns Future<void>, it's not async itself
+            final current = _currentProgress;
+            if (current != null) {
+              return current;
             }
-            // debugPrint(details.targetElement.toString());
-            // debugPrint(details.date?.toString());
-            // debugPrint(details.appointments?.toString());
+            final displayed = _getCurrentDisplayedDates();
+            return _getTimetable(
+              displayed.start,
+              displayed.end.add(const Duration(days: 1)),
+              force: true,
+            );
           },
         ),
-        onRefresh: () {
-          // returns Future<void>, it's not async itself
-          final current = _currentProgress;
-          if (current != null) {
-            return current;
+        onWillPop: () async {
+          final defaultMode = await storage.isWeekView() ? CalendarView.workWeek : CalendarView.day;
+          if (_controller.view != defaultMode) {
+            _controller.view = defaultMode;
+            _controller.displayDate = DateTime.now();
+            _controller.selectedDate = null;
+            return false;
           }
-          final displayed = _getCurrentDisplayedDates();
-          return _getTimetable(
-            displayed.start,
-            displayed.end.add(const Duration(days: 1)),
-            force: true,
-          );
+          return true;
         },
       ),
-      onWillPop: () async {
-        final defaultMode = await storage.isWeekView() ? CalendarView.workWeek : CalendarView.day;
-        if (_controller.view != defaultMode) {
-          _controller.view = defaultMode;
-          _controller.displayDate = DateTime.now();
-          _controller.selectedDate = null;
-          return false;
-        }
-        return true;
-      },
     );
   }
 

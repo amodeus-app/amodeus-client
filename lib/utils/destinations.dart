@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
 
 import '../screens/calendar.dart';
-import '../screens/counter.dart';
 import '../screens/settings.dart';
 import '../widgets/adaptive_scaffold.dart';
 
 final destinations = <AdaptiveScaffoldDestination>[
-  AdaptiveScaffoldDestination(
+  const AdaptiveScaffoldDestination(
     title: "Расписание",
     icon: Icons.calendar_today,
-    body: Builder(builder: (context) => const CalendarScreen()),
-    actions: <Widget>[
-      const IconButton(
-        onPressed: null,
-        icon: Icon(Icons.search),
-        tooltip: "Поиск",
-      ),
-    ],
+    body: CalendarScreen(),
   ),
-  AdaptiveScaffoldDestination(
-    body: Builder(builder: (context) => const CounterScreen()),
+  /*const AdaptiveScaffoldDestination(
     title: "Оценки",
     icon: Icons.bookmark,
-  ),
-  AdaptiveScaffoldDestination(
-    body: Builder(builder: (context) => const SettingsScreen()),
+    body: MarksScreen(), // TODO (2022-02-20): implement
+  ),*/
+  const AdaptiveScaffoldDestination(
     title: "Настройки",
     icon: Icons.settings,
+    body: SettingsScreen(),
   ),
 ];
