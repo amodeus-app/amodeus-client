@@ -7,7 +7,49 @@ const lessonDuration = Duration(hours: 1, minutes: 30);
 
 final _breakColor = Colors.grey.withOpacity(0.2);
 final _holidayColor = Colors.grey.withOpacity(0.3);
-const _heldLessonOpacity = 0.4;
+const _heldLessonOpacity = 0.2;
+
+Color getLessonColor(Lesson lesson, {bool dark = false, bool isHeld = false}) {
+  Color color;
+  switch (lesson.type) {
+    case "SEMI":
+      color = Colors.lightBlue;
+      break;
+    case "LECT":
+      color = Colors.lightGreen;
+      break;
+    case "LAB":
+      color = Colors.orangeAccent;
+      break;
+    case "CONS":
+      color = Colors.deepPurpleAccent;
+      break;
+    default:
+      switch (lesson.format) {
+        case "PRETEST":
+          color = Colors.pinkAccent;
+          break;
+        case "EXAMINATION":
+          color = Colors.greenAccent;
+          break;
+        default:
+          assert(lesson.type != "MID_CHECK");
+          color = Colors.grey;
+          break;
+      }
+  }
+
+  if (dark) {
+    final hsl = HSLColor.fromColor(color);
+    color = hsl.withLightness((hsl.lightness - .2).clamp(0.0, 1.0)).toColor();
+  }
+  if (isHeld) {
+    // final hsl = HSLColor.fromColor(color);
+    // color = hsl.withSaturation((hsl.saturation - .2).clamp(0.0, 1.0)).toColor();
+    color = color.withOpacity(_heldLessonOpacity);
+  }
+  return color;
+}
 
 class LessonDataSource extends CalendarDataSource {
   LessonDataSource(BuiltList<TimetableElement> lessons) {
@@ -27,54 +69,7 @@ class LessonDataSource extends CalendarDataSource {
   }
 
   @override
-  String getSubject(int index) {
-    return _appointmentAt(index).lesson.subject.nameShort;
-  }
-
-  @override
-  Color getColor(int index) {
-    final Color color;
-    switch (_appointmentAt(index).lesson.type) {
-      case "SEMI":
-        color = Colors.lightBlue;
-        break;
-      case "LECT":
-        color = Colors.lightGreen;
-        break;
-      case "LAB":
-        color = Colors.orangeAccent;
-        break;
-      case "CONS":
-        color = Colors.deepPurpleAccent;
-        break;
-      default:
-        switch (_appointmentAt(index).lesson.format) {
-          case "PRETEST":
-            color = Colors.pinkAccent;
-            break;
-          case "EXAMINATION":
-            color = Colors.greenAccent;
-            break;
-          default:
-            assert(_appointmentAt(index).lesson.type != "MID_CHECK");
-            color = Colors.grey;
-            break;
-        }
-    }
-
-    if (getStartTime(index).isBefore(DateTime.now())) {
-      return color.withOpacity(_heldLessonOpacity);
-    }
-    return color;
-  }
-
-  @override
-  String? getLocation(int index) {
-    return _appointmentAt(index).location?.full;
-  }
-
-  @override
-  bool isAllDay(int index) => false;
+  bool isAllDay(int index) => false; // Lessons cannot last all day
 }
 
 final defaultNonWorkingDays = <TimeRegion>[

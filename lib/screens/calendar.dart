@@ -4,10 +4,13 @@ import 'package:amodeus_api/amodeus_api.dart' show AmodeusApi, TimetableElement;
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../utils/lessons.dart';
 import '../utils/storage.dart' as storage;
+import '../utils/theme.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -23,53 +26,141 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Future<void>? _currentProgress;
   DateTimeRange? _cachedRange;
 
-  /*Widget _appointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
-    final fmt = DateFormat('hh:mm a');
-    if (details.isMoreAppointmentRegion) {
-      return SizedBox(
-        width: details.bounds.width,
-        height: details.bounds.height,
-        child: const Text('+More'),
-      );
-    } else if (_controller.view == CalendarView.month) {
-      final TimetableElement appointment = details.appointments.first;
-      return Container(
-        decoration: BoxDecoration(
-          color: appointment.lessonColor,
-          shape: BoxShape.rectangle,
-          borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-          gradient: const LinearGradient(
-            colors: [Colors.red, Colors.cyan],
-            begin: Alignment.centerRight,
-            end: Alignment.centerLeft,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+  void _onElementClick(BuildContext context, TimetableElement el) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(el.lesson.subject.name),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(el.lesson.name, textAlign: TextAlign.left),
+            Text(el.location?.full ?? "Место не определено", textAlign: TextAlign.left),
             Text(
-              appointment.lesson,
+              '${DateFormat('HH:mm').format(el.start.toLocal())}–'
+              '${DateFormat('HH:mm').format(el.end.toLocal())}',
               textAlign: TextAlign.left,
-              style: const TextStyle(color: Colors.white, fontSize: 10),
-            ),
-            Text(
-              '${fmt.format(appointment.start)} - ${fmt.format(appointment.end)}',
-              textAlign: TextAlign.left,
-              style: const TextStyle(color: Colors.white, fontSize: 10),
             ),
           ],
         ),
-      );
-    } else {
-      final TimetableElement appointment = details.appointments.first;
-      return SizedBox(
+        scrollable: true,
+      ),
+    );
+  }
+
+  Widget _appointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
+    final TimetableElement el = details.appointments.first;
+    var cardText =
+        (details.bounds.width < 100) ? el.lesson.subject.nameShort : el.lesson.subject.name;
+    if (details.isMoreAppointmentRegion) {
+      return Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(.5),
+          borderRadius: BorderRadius.circular(5),
+        ),
         width: details.bounds.width,
         height: details.bounds.height,
-        child: Text(appointment.lesson),
+        child: const Text(
+          "...",
+          style: TextStyle(fontSize: 10),
+        ),
       );
     }
-  }*/
+    if (_controller.view != CalendarView.month) {
+      return Column(
+        children: [
+          Consumer<ThemeNotifier>(
+            builder: (context, theme, _) => Container(
+              padding: const EdgeInsets.all(3),
+              height: details.bounds.height,
+              alignment: Alignment.topLeft,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(5),
+                color: getLessonColor(
+                  el.lesson,
+                  dark: theme.isDark ||
+                      Theme.of(context).brightness == ThemeNotifier.darkTheme.brightness,
+                  isHeld: DateTime.now().isAfter(el.end.toLocal()),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      cardText,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      maxLines: 3,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      el.location?.full ?? "Не определено",
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      maxLines: 3,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    final isDetailedMonthCard = details.bounds.height >= 30;
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, _) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        height: details.bounds.height,
+        alignment: Alignment.topLeft,
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(5),
+          color: getLessonColor(
+            el.lesson,
+            dark:
+                theme.isDark || Theme.of(context).brightness == ThemeNotifier.darkTheme.brightness,
+            isHeld: DateTime.now().isAfter(el.end.toLocal()),
+          ),
+        ),
+        child: isDetailedMonthCard
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    cardText,
+                    style: TextStyle(fontSize: !isDetailedMonthCard ? 10 : null),
+                    overflow: TextOverflow.fade,
+                    maxLines: 2,
+                  ),
+                  if (isDetailedMonthCard)
+                    Text(
+                      "${DateFormat('HH:mm').format(el.start.toLocal())}–"
+                      "${DateFormat('HH:mm').format(el.end.toLocal())}",
+                      style: const TextStyle(fontSize: 12),
+                    )
+                ],
+              )
+            : Text(
+                cardText,
+                style: const TextStyle(fontSize: 10),
+                overflow: TextOverflow.clip,
+                maxLines: 1,
+              ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -94,7 +185,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           monthViewSettings: const MonthViewSettings(
             showAgenda: true,
             numberOfWeeksInView: 4,
-            appointmentDisplayCount: 5,
+            appointmentDisplayCount: 4,
             dayFormat: "E",
             appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
           ),
@@ -117,7 +208,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           showNavigationArrow: true,
           showDatePickerButton: true,
           allowViewNavigation: true,
-          appointmentBuilder: null,
+          appointmentBuilder: _appointmentBuilder,
           timeZone: "Asia/Yekaterinburg",
           onViewChanged: (details) {
             _currentProgress = _getTimetable(
@@ -131,9 +222,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
           specialRegions: defaultNonWorkingDays + defaultTimetableBreaks,
           dataSource: LessonDataSource(_lessons),
           onTap: (details) {
-            debugPrint(details.targetElement.toString());
-            debugPrint(details.date?.toString());
-            debugPrint(details.appointments?.toString());
+            if (details.targetElement == CalendarElement.appointment) {
+              _onElementClick(context, details.appointments?.first);
+              return;
+            }
+            // debugPrint(details.targetElement.toString());
+            // debugPrint(details.date?.toString());
+            // debugPrint(details.appointments?.toString());
           },
         ),
         onRefresh: () {
@@ -151,8 +246,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
         },
       ),
       onWillPop: () async {
-        if (_controller.view != CalendarView.week) {
-          _controller.view = CalendarView.week;
+        final defaultMode = await storage.isWeekView() ? CalendarView.workWeek : CalendarView.day;
+        if (_controller.view != defaultMode) {
+          _controller.view = defaultMode;
           _controller.displayDate = DateTime.now();
           _controller.selectedDate = null;
           return false;
