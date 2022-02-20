@@ -1,96 +1,142 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-// region _helpers
-void _setData(String key, String value) async {
+// region Helpers
+void _removeKey(String key) async {
   final prefs = await SharedPreferences.getInstance();
-  final success = await prefs.setString(key, value);
-  if (!success) {
-    throw AssertionError("Cannot save $key");
+  final res = await prefs.remove(key);
+  assert(res);
+}
+
+abstract class _DataHelper<T> {
+  const _DataHelper();
+
+  Future<T?> get();
+  void set(T? value);
+}
+
+class _StringDataHelper implements _DataHelper<String> {
+  final String key;
+
+  const _StringDataHelper({required this.key});
+
+  @override
+  Future<String?> get() async {
+    final prefs = await SharedPreferences.getInstance();
+    final res = prefs.getString(key);
+    if (res == "") {
+      return null;
+    }
+    return res;
+  }
+
+  @override
+  void set(String? value) async {
+    if (value == null || value == "") {
+      _removeKey(key);
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    final success = await prefs.setString(key, value);
+    if (!success) {
+      throw AssertionError("Cannot save $key");
+    }
   }
 }
 
-void _setFlag(String key, bool value) async {
-  final prefs = await SharedPreferences.getInstance();
-  final success = await prefs.setBool(key, value);
-  if (!success) {
-    throw AssertionError("Cannot save $key");
+class _FlagDataHelper implements _DataHelper<bool> {
+  final String key;
+
+  const _FlagDataHelper({required this.key});
+
+  @override
+  Future<bool?> get() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key);
   }
-}
 
-Future<String?> _readData(String key) async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(key);
-}
+  Future<bool> getNotNull() async {
+    return (await get() == true);
+  }
 
-Future<bool?> _readFlag(String key) async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getBool(key);
-}
-
-Future<bool> _deleteData(String key) async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.remove(key);
+  @override
+  void set(bool? value) async {
+    if (value == null) {
+      _removeKey(key);
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    final success = await prefs.setBool(key, value);
+    if (!success) {
+      throw AssertionError("Cannot save $key");
+    }
+  }
 }
 // endregion
 
+const darkTheme = _FlagDataHelper(key: "darkTheme");
+const authEnabled = _FlagDataHelper(key: "auth");
+const weekView = _FlagDataHelper(key: "weekView");
+const baseURL = _StringDataHelper(key: "d_baseUrl");
+const personUUID = _StringDataHelper(key: "personUuid");
+
+// region Deprecated methods
 // region darkTheme
-Future<bool?> isPreferredDarkMode() async {
-  return await _readFlag("darkTheme");
+@Deprecated("Use [darkTheme.get] instead")
+Future<bool?> isPreferredDarkMode() {
+  return darkTheme.get();
 }
 
-void setPreferredDarkMode(bool? value) async {
-  if (value == null) {
-    _deleteData("darkTheme");
-    return;
-  }
-  _setFlag("darkTheme", value);
+@Deprecated("Use [darkTheme.set] instead")
+void setPreferredDarkMode(bool? value) {
+  return darkTheme.set(value);
 }
 // endregion
 
 // region auth
-Future<bool> isAuthEnabled() async {
-  return (await _readFlag("auth")) == true;
+@Deprecated("Use [authEnabled.getNotNull] instead")
+Future<bool> isAuthEnabled() {
+  return authEnabled.getNotNull();
 }
 
-void setAuthEnabled(bool value) async {
-  _setFlag("auth", value);
+@Deprecated("Use [authEnabled.set] instead")
+void setAuthEnabled(bool value) {
+  return authEnabled.set(value);
 }
 // endregion
 
-// region dayView
-Future<bool> isWeekView() async {
-  return (await _readFlag("weekView")) == true;
+// region weekView
+@Deprecated("Use [weekView.getNotNull] instead")
+Future<bool> isWeekView() {
+  return weekView.getNotNull();
 }
 
-void setWeekView(bool value) async {
-  _setFlag("weekView", value);
+@Deprecated("Use [weekView.set] instead")
+void setWeekView(bool value) {
+  return weekView.set(value);
 }
 // endregion
 
 // region d_baseUrl
-Future<String?> getBaseUrl() async {
-  final v = await _readData("d_baseUrl");
-  if (v == "") {
-    return null;
-  }
-  return v;
+@Deprecated("Use [baseURL.get] instead")
+Future<String?> getBaseUrl() {
+  return baseURL.get();
 }
 
-void setBaseUrl(String value) async {
-  _setData("d_baseUrl", value);
+@Deprecated("Use [baseURL.set] instead")
+void setBaseUrl(String value) {
+  return baseURL.set(value);
 }
 // endregion
 
-// region d_personUuid
-Future<String?> getPersonUUID() async {
-  final v = await _readData("personUuid");
-  if (v == "") {
-    return null;
-  }
-  return v;
+// region personUuid
+@Deprecated("Use [personUUID.get] instead")
+Future<String?> getPersonUUID() {
+  return personUUID.get();
 }
 
-void setPersonUUID(String value) async {
-  _setData("personUuid", value);
+@Deprecated("Use [personUUID.set] instead")
+void setPersonUUID(String value) {
+  return personUUID.set(value);
 }
+// endregion
 // endregion
