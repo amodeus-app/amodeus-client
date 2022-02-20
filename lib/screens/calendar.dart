@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import './search.dart';
 import '../utils/lessons.dart';
 import '../utils/storage.dart' as storage;
 import '../utils/theme.dart';
@@ -258,6 +259,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
             return false;
           }
           return true;
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.search),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SearchScreen(
+                onSearchFinished: () => _refresh.currentState!.show(),
+              ),
+            ),
+          );
         },
       ),
     );
