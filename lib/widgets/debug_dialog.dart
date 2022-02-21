@@ -44,19 +44,19 @@ class _DebugDialogState extends State<DebugDialog> {
   @override
   void initState() {
     super.initState();
-    storage.isPreferredDarkMode().then((value) => setState(() {
+    storage.darkTheme.get().then((value) => setState(() {
           _darkTheme = value;
         }));
-    storage.isAuthEnabled().then((value) => setState(() {
+    storage.authEnabled.getNotNull().then((value) => setState(() {
           _auth = value;
         }));
-    storage.isWeekView().then((value) => setState(() {
+    storage.weekView.getNotNull().then((value) => setState(() {
           _weekView = value;
         }));
-    storage.getBaseUrl().then((value) => setState(() {
+    storage.baseURL.get().then((value) => setState(() {
           _baseUrl.text = value ?? "";
         }));
-    storage.getPersonUUID().then((value) => setState(() {
+    storage.personUUID.get().then((value) => setState(() {
           _personUuid.text = value ?? "";
         }));
   }
@@ -70,7 +70,7 @@ class _DebugDialogState extends State<DebugDialog> {
           "darkTheme",
           _darkTheme,
           (value) => setState(() {
-            storage.setPreferredDarkMode(value);
+            storage.darkTheme.set(value);
             _darkTheme = value;
           }),
         ),
@@ -78,7 +78,7 @@ class _DebugDialogState extends State<DebugDialog> {
           "auth",
           _auth,
           (value) => setState(() {
-            storage.setAuthEnabled(value);
+            storage.authEnabled.set(value);
             _auth = value;
           }),
         ),
@@ -86,7 +86,7 @@ class _DebugDialogState extends State<DebugDialog> {
           "weekView",
           _weekView,
           (value) => setState(() {
-            storage.setWeekView(value);
+            storage.weekView.set(value);
             _weekView = value;
           }),
         ),
@@ -94,7 +94,7 @@ class _DebugDialogState extends State<DebugDialog> {
           "d_baseUrl",
           _baseUrl,
           (value) => setState(() {
-            storage.setBaseUrl(value);
+            storage.baseURL.set(value);
             _baseUrl.text = value;
           }),
         ),
@@ -102,7 +102,7 @@ class _DebugDialogState extends State<DebugDialog> {
           "personUuid",
           _personUuid,
           (value) => setState(() {
-            storage.setPersonUUID(value);
+            storage.personUUID.set(value);
             _personUuid.text = value;
           }),
         ),

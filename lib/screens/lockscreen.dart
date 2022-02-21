@@ -29,7 +29,7 @@ class _LockScreenState extends State<LockScreen> {
   @override
   void initState() {
     super.initState();
-    storage.isAuthEnabled().then((value) {
+    storage.authEnabled.getNotNull().then((value) {
       if (!value) {
         _continue();
       } else {

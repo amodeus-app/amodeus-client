@@ -33,7 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _localAuth.isDeviceSupported().then((value) async {
-      final isAuthEnabled = await storage.isAuthEnabled();
+      final isAuthEnabled = await storage.authEnabled.getNotNull();
       setState(() {
         _authAvailable = value;
         _authEnabled = isAuthEnabled;
@@ -43,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _authAvailable = false;
       });
     });
-    storage.isWeekView().then((value) => setState(() {
+    storage.weekView.getNotNull().then((value) => setState(() {
           _weekView = value;
         }));
   }
@@ -58,7 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _toggleAuth(bool setOn, {bool noPin = false}) async {
     if (!setOn) {
-      storage.setAuthEnabled(false);
+      storage.authEnabled.set(false);
     } else {
       final authenticated = await _localAuth.authenticate(
         localizedReason: "Защита приложения",
@@ -71,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!authenticated) {
         return;
       }
-      storage.setAuthEnabled(true);
+      storage.authEnabled.set(true);
     }
     setState(() {
       _authEnabled = setOn;
@@ -79,7 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _toggleWeekView(bool setOn) async {
-    storage.setWeekView(setOn);
+    storage.weekView.set(setOn);
     setState(() {
       _weekView = setOn;
     });

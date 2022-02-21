@@ -164,7 +164,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    storage.isWeekView().then((value) {
+    storage.weekView.getNotNull().then((value) {
       if (value) {
         _controller.view = CalendarView.workWeek;
         _controller.displayDate = DateTime.now();
@@ -261,7 +261,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
           },
         ),
         onWillPop: () async {
-          final defaultMode = await storage.isWeekView() ? CalendarView.workWeek : CalendarView.day;
+          final defaultMode =
+              await storage.weekView.getNotNull() ? CalendarView.workWeek : CalendarView.day;
           if (_controller.view != defaultMode) {
             _controller.view = defaultMode;
             _controller.displayDate = DateTime.now();
@@ -305,7 +306,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<void> _getTimetable(DateTime start, DateTime end, {bool force = false}) async {
-    final uuid = await storage.getPersonUUID();
+    final uuid = await storage.personUUID.get();
     if (uuid == null) {
       return;
     }
@@ -338,7 +339,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<BuiltList<TimetableElement>?> _callApi(String uuid, DateTime? start, DateTime? end) async {
-    var baseUrl = await storage.getBaseUrl() ?? AmodeusApi.basePath;
+    var baseUrl = await storage.baseURL.get() ?? AmodeusApi.basePath;
     final api = AmodeusApi(basePathOverride: baseUrl).getTimetableApi();
     try {
       final resp = await api.getPersonTimetable(uuid: uuid, from: start?.toUtc(), to: end?.toUtc());

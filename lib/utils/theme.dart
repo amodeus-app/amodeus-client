@@ -43,7 +43,7 @@ class ThemeNotifier with ChangeNotifier {
   bool get isSystem => themeMode == ThemeMode.system;
 
   ThemeNotifier() {
-    storage.isPreferredDarkMode().then((value) {
+    storage.darkTheme.get().then((value) {
       if (value != null) {
         themeMode = value ? ThemeMode.dark : ThemeMode.light;
         notifyListeners();
@@ -53,19 +53,19 @@ class ThemeNotifier with ChangeNotifier {
 
   void setDarkMode() async {
     themeMode = ThemeMode.dark;
-    storage.setPreferredDarkMode(true);
+    storage.darkTheme.set(true);
     notifyListeners();
   }
 
   void setLightMode() async {
     themeMode = ThemeMode.light;
-    storage.setPreferredDarkMode(false);
+    storage.darkTheme.set(false);
     notifyListeners();
   }
 
   void setSystemTheme() async {
     themeMode = ThemeMode.system;
-    storage.setPreferredDarkMode(null);
+    storage.darkTheme.set(null);
     notifyListeners();
   }
 
