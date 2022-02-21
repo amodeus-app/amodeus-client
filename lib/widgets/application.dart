@@ -16,6 +16,7 @@ class Application extends StatelessWidget {
           themeMode: theme.themeMode,
           theme: ThemeNotifier.lightTheme,
           darkTheme: ThemeNotifier.darkTheme,
+          debugShowCheckedModeBanner: false,
           home: LockOverlay(
             mainScreen: AdaptiveScaffold(
               destinations: destinations,

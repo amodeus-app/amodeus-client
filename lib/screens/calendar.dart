@@ -177,6 +177,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Расписание"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchScreen(
+                    onSearchFinished: () => _refresh.currentState!.show(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: WillPopScope(
         child: RefreshIndicator(
@@ -229,9 +244,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 _onElementClick(context, details.appointments?.first);
                 return;
               }
-              // debugPrint(details.targetElement.toString());
-              // debugPrint(details.date?.toString());
-              // debugPrint(details.appointments?.toString());
             },
           ),
           onRefresh: () {
@@ -257,19 +269,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
             return false;
           }
           return true;
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.search),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SearchScreen(
-                onSearchFinished: () => _refresh.currentState!.show(),
-              ),
-            ),
-          );
         },
       ),
     );
