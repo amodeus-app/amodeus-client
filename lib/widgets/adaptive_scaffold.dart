@@ -76,7 +76,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     ListTile(
                       leading: Icon(d.icon),
                       title: Text(d.title),
-                      selected: widget.destinations.indexOf(d) == widget.currentIndex,
+                      selected: widget.destinations.indexOf(d) == _i,
                       onTap: () => _destinationTapped(d),
                     ),
                 ],
@@ -124,7 +124,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
 
   void _destinationTapped(AdaptiveScaffoldDestination destination) {
     var idx = widget.destinations.indexOf(destination);
-    if (idx != widget.currentIndex) {
+    if (idx != _i) {
       _changeScreen(idx);
     }
   }
