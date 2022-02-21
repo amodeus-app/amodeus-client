@@ -81,8 +81,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 borderRadius: BorderRadius.circular(5),
                 color: getLessonColor(
                   el.lesson,
-                  dark: theme.isDark ||
-                      Theme.of(context).brightness == ThemeNotifier.darkTheme.brightness,
+                  dark: theme.isEffectivelyDark,
                   isHeld: DateTime.now().isAfter(el.end.toLocal()),
                 ),
               ),
@@ -130,8 +129,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           borderRadius: BorderRadius.circular(5),
           color: getLessonColor(
             el.lesson,
-            dark:
-                theme.isDark || Theme.of(context).brightness == ThemeNotifier.darkTheme.brightness,
+            dark: theme.isEffectivelyDark,
             isHeld: DateTime.now().isAfter(el.end.toLocal()),
           ),
         ),

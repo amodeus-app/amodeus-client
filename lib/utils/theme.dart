@@ -68,4 +68,8 @@ class ThemeNotifier with ChangeNotifier {
     storage.setPreferredDarkMode(null);
     notifyListeners();
   }
+
+  bool get isEffectivelyDark =>
+      themeMode == ThemeMode.dark ||
+      WidgetsBinding.instance!.platformDispatcher.platformBrightness == Brightness.dark;
 }

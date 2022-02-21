@@ -85,7 +85,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             VerticalDivider(
               width: 1,
               thickness: 1,
-              color: theme.isDark ? Colors.grey[800] : Colors.grey[300],
+              color: theme.isEffectivelyDark ? Colors.grey[800] : Colors.grey[300],
             ),
             Expanded(
               child: Scaffold(
