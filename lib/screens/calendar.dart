@@ -180,6 +180,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
+            tooltip: "Поиск по ФИО",
             onPressed: () {
               Navigator.push(
                 context,
