@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,10 +23,9 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool? _authAvailable;
-
   bool _authEnabled = false;
-
   bool _weekView = false;
+  PackageInfo? _info;
 
   final _localAuth = LocalAuthentication();
 
@@ -45,6 +45,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
     storage.weekView.getNotNull().then((value) => setState(() {
           _weekView = value;
+        }));
+    PackageInfo.fromPlatform().then((value) => setState(() {
+          _info = value;
         }));
   }
 
@@ -98,6 +101,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeNotifier>(context);
+    const debugSuffix = kDebugMode ? " DEBUG" : "";
+    String appName = "", appVersion = "", aboutSubtitle = "", appFullVersion = "";
+    if (_info != null) {
+      appName = _info!.appName;
+      appVersion = "${_info!.version}$debugSuffix";
+      aboutSubtitle = "$appName $appVersion";
+      appFullVersion = "$appVersion build ${_info!.buildNumber}";
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text("Настройки"),
@@ -145,9 +156,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             context: context,
             icon: Icons.info,
             title: "О программе",
-            subtitle: "amodeus_client 0.1.0-alpha.1",
-            appName: "amodeus_client",
-            appVersion: "0.1.0-alpha.1 build 2",
+            subtitle: aboutSubtitle,
+            appName: appName,
+            appVersion: appFullVersion,
             appIcon: const Icon(Icons.accessible_forward, size: 48.0),
             children: <Widget>[
               Text.rich(
