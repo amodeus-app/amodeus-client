@@ -115,16 +115,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: ListView(
         children: <SettingsTile>[
-          SettingsTile(
-            icon: Icons.account_circle,
-            title: "Аккаунт",
-            subtitle: "Вход не выполнен",
-            enabled: kDebugMode,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
+          if (kDebugMode)
+            SettingsTile(
+              icon: Icons.account_circle,
+              title: "Аккаунт",
+              subtitle: "Вход не выполнен",
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              ),
             ),
-          ),
           SettingsSwitchTile(
             title: "При запуске показывать",
             subtitle: _weekView ? "Расписание на неделю" : "Расписание на сегодня",
