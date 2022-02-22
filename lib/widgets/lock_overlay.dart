@@ -1,4 +1,6 @@
+import 'package:amodeus_client/utils/update_checker.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../screens/lockscreen.dart';
 
@@ -22,10 +24,24 @@ class _LockOverlayState extends State<LockOverlay> {
     return IndexedStack(
       index: _i,
       children: [
-        LockScreen(onUnlocked: () {
+        LockScreen(onUnlocked: () async {
           setState(() {
             _i = 1;
           });
+          final newerVersion = await getNewerVersion();
+          if (newerVersion != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text("Доступно обновление для приложения"),
+                action: SnackBarAction(
+                  label: "СКАЧАТЬ",
+                  onPressed: () async => await launch(
+                    "https://github.com/evgfilim1/amodeus-client/releases/tag/$newerVersion",
+                  ),
+                ),
+              ),
+            );
+          }
         }),
         widget.mainScreen,
       ],
