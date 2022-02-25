@@ -53,6 +53,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final TimetableElement el = details.appointments.first;
     var cardText =
         (details.bounds.width < 100) ? el.lesson.subject.nameShort : el.lesson.subject.name;
+    final now = DateTime.now();
+    final isHeld = now.isAfter(el.end.toLocal());
+    if (!isHeld) {
+      Timer(now.difference(el.end.toLocal()), () => setState(() {}));
+    }
     if (details.isMoreAppointmentRegion) {
       return Container(
         padding: const EdgeInsets.all(3),
@@ -82,7 +87,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 color: getLessonColor(
                   el.lesson,
                   dark: theme.isEffectivelyDark,
-                  isHeld: DateTime.now().isAfter(el.end.toLocal()),
+                  isHeld: isHeld,
                 ),
               ),
               child: SingleChildScrollView(
