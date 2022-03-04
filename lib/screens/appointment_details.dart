@@ -43,23 +43,27 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
   @override
   Widget build(BuildContext context) {
     final teachers = _getSortedPeopleNames(widget.appointment.teachers).toList();
-    final teachersMore = ", ещё ${teachers.length - 1}...";
+    final teachersMore = ", ещё ${teachers.length - 1}…";
     final teachersSubtitle = "${teachers[0]} ${teachers.length > 1 ? teachersMore : ""}";
     final teachersFull = teachers.join(",\n");
 
-    var teamSubtitle = "Загрузка...";
-    var teamFull = "Пожалуйста, подождите...";
+    var teamSubtitle = "Загрузка…";
+    var teamFull = "Пожалуйста, подождите…";
     if (_team != null) {
       final team = _team!.toList();
-      final teamMore = ", ещё ${team.length - 1}...";
+      final teamMore = ", ещё ${team.length - 1}…";
       teamSubtitle = "${team[0]} ${team.length > 1 ? teamMore : ""}";
       teamFull = team.asMap().entries.map((e) => "${e.key + 1}. ${e.value}").join("\n");
     }
 
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text(widget.appointment.lesson.subject.name, maxLines: 1, overflow: TextOverflow.fade),
+        title: Text(
+          widget.appointment.lesson.subject.name,
+          softWrap: false,
+          maxLines: 1,
+          overflow: TextOverflow.fade,
+        ),
       ),
       body: ListView(
         children: <DetailTile>[

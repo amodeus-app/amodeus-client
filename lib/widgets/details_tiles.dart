@@ -19,7 +19,7 @@ class DetailTile extends StatelessWidget {
     return ListTile(
       leading: leading ?? const SizedBox(),
       title: Text(title),
-      subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text(subtitle, softWrap: false, maxLines: 1, overflow: TextOverflow.fade),
       onTap: () {
         showDialog(
           context: context,
