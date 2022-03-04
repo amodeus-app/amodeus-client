@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:amodeus_api/amodeus_api.dart' show AmodeusApi, Person;
+import 'package:amodeus_api/amodeus_api.dart' show Person;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/api.dart';
 import '../utils/storage.dart' as storage;
 
 class SearchScreen extends StatefulWidget {
@@ -25,8 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Timer? _t;
 
   Future<void> _search(String query) async {
-    final baseUrl = await storage.baseURL.get() ?? AmodeusApi.basePath;
-    final api = AmodeusApi(basePathOverride: baseUrl).getSearchApi();
+    final api = (await getApi()).getSearchApi();
     try {
       final res = await api.search(personName: query);
       setState(() {

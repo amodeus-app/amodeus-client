@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:amodeus_api/amodeus_api.dart' show AmodeusApi, TimetableElement;
+import 'package:amodeus_api/amodeus_api.dart' show TimetableElement;
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import './search.dart';
+import '../utils/api.dart';
 import '../utils/lessons.dart';
 import '../utils/storage.dart' as storage;
 import '../utils/theme.dart';
@@ -345,8 +346,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<BuiltList<TimetableElement>?> _callApi(String uuid, DateTime? start, DateTime? end) async {
-    var baseUrl = await storage.baseURL.get() ?? AmodeusApi.basePath;
-    final api = AmodeusApi(basePathOverride: baseUrl).getTimetableApi();
+    final api = (await getApi()).getTimetableApi();
     try {
       final resp = await api.getPersonTimetable(uuid: uuid, from: start?.toUtc(), to: end?.toUtc());
       return resp.data!;
