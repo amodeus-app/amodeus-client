@@ -12,7 +12,7 @@ class DetailTile extends StatelessWidget {
     this.leading,
     required this.title,
     required this.subtitle,
-    this.content,
+    this.content = "",
     this.actions,
   }) : super(key: key);
 
@@ -22,17 +22,19 @@ class DetailTile extends StatelessWidget {
       leading: leading ?? const SizedBox(),
       title: Text(title),
       subtitle: Text(subtitle, softWrap: false, maxLines: 1, overflow: TextOverflow.fade),
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(title),
-            content: Text(content ?? subtitle),
-            scrollable: true,
-            actions: actions,
-          ),
-        );
-      },
+      onTap: content != null
+          ? () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(title),
+                  content: Text(content != "" ? content! : subtitle),
+                  scrollable: true,
+                  actions: actions,
+                ),
+              );
+            }
+          : null,
     );
   }
 }
@@ -43,7 +45,7 @@ class DetailIconTile extends DetailTile {
     required IconData icon,
     required String title,
     required String subtitle,
-    String? content,
+    String? content = "",
     List<Widget>? actions,
   }) : super(
           key: key,
@@ -62,7 +64,7 @@ class DetailColorTile extends DetailTile {
     IconData icon = Icons.circle,
     required String title,
     required String subtitle,
-    String? content,
+    String? content = "",
     List<Widget>? actions,
   }) : super(
           key: key,

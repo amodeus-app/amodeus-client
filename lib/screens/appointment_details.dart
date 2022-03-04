@@ -110,11 +110,13 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
             title: "Время",
             subtitle: '${DateFormat('HH:mm').format(widget.appointment.start.toLocal())}–'
                 '${DateFormat('HH:mm').format(widget.appointment.end.toLocal())}',
+            content: null,
           ),
           DetailColorTile(
             color: getLessonColor(widget.appointment.lesson),
             title: "Формат занятия",
             subtitle: getFriendlyLessonType(widget.appointment.lesson),
+            content: null,
           ),
           DetailIconTile(
             icon: Icons.person,
