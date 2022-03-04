@@ -1,6 +1,7 @@
 import 'package:amodeus_api/amodeus_api.dart' show Person, TimetableElement;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/api.dart';
 import '../utils/lessons.dart';
@@ -56,6 +57,23 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
       teamFull = team.asMap().entries.map((e) => "${e.key + 1}. ${e.value}").join("\n");
     }
 
+    var location = "Место не определено";
+    var locationFull = location;
+    final locationObj = widget.appointment.location;
+    if (locationObj != null) {
+      var buildingExtra = "";
+      final building = locationObj.building;
+      if (building != null) {
+        final friendlyName = getFriendlyBuildingName(building.number);
+        buildingExtra = "\n\n${building.address}\n${friendlyName ?? ""}";
+      }
+      location = locationObj.full;
+      locationFull = "$location$buildingExtra";
+    }
+
+    final address = locationObj?.building?.address;
+    final encodedAddress = address != null ? Uri.encodeComponent(address) : null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -75,7 +93,17 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
           DetailIconTile(
             icon: Icons.place,
             title: "Место проведения",
-            subtitle: widget.appointment.location?.full ?? "Место не определено",
+            subtitle: location,
+            content: locationFull,
+            actions: encodedAddress != null
+                ? [
+                    TextButton(
+                      onPressed: () async =>
+                          await launch("https://2gis.ru/tyumen/search/$encodedAddress/"),
+                      child: const Text("НА КАРТЕ"),
+                    ),
+                  ]
+                : null,
           ),
           DetailIconTile(
             icon: Icons.access_time,

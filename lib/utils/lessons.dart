@@ -41,6 +41,55 @@ String getFriendlyLessonType(Lesson lesson) {
   return type;
 }
 
+String? getFriendlyBuildingName(int buildingNumber) {
+  String? name;
+  switch (buildingNumber) {
+    case 1:
+      name = "Институт филологии и журналистики (ИФиЖ, снесён)";
+      break;
+    case 3:
+      name = "Институт наук о Земле (ИнЗем)";
+      break;
+    case 4:
+      name = "Финансово-экономический институт (ФЭИ)";
+      break;
+    case 5:
+      name = "Институт математики и компьютерных наук (ИМиКН)";
+      break;
+    case 6:
+      name = "Институт биологии (ИнБио)";
+      break;
+    case 7:
+      name = "Институт физической культуры (ИФК) / СК Олимпия";
+      break;
+    case 9:
+      name = "Спортивно-оздоровительный комплекс (СОК)";
+      break;
+    case 10:
+      name = "Институт государства и права (ИГиП)";
+      break;
+    case 11:
+      name = "Институт социально-гуманитарных наук (СоцГум)";
+      break;
+    case 12:
+      name = "Библиотечно-музейный комплекс (БМК)";
+      break;
+    case 13:
+      name = "Центр зимних видов спорта (ЦЗВС)";
+      break;
+    case 16:
+      name = "Институт психологии и педагогики (ИПиП)";
+      break;
+    case 17:
+      name = "ФабЛаб / X-BIO";
+      break;
+    case 19:
+      name = "Школа перспективных исследований (SAS)";
+      break;
+  }
+  return name;
+}
+
 Color getLessonColor(Lesson lesson, {bool dark = false, bool isHeld = false}) {
   Color color;
   switch (lesson.type) {

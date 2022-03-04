@@ -5,6 +5,7 @@ class DetailTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final String? content;
+  final List<Widget>? actions;
 
   const DetailTile({
     Key? key,
@@ -12,6 +13,7 @@ class DetailTile extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.content,
+    this.actions,
   }) : super(key: key);
 
   @override
@@ -27,6 +29,7 @@ class DetailTile extends StatelessWidget {
             title: Text(title),
             content: Text(content ?? subtitle),
             scrollable: true,
+            actions: actions,
           ),
         );
       },
@@ -41,12 +44,14 @@ class DetailIconTile extends DetailTile {
     required String title,
     required String subtitle,
     String? content,
+    List<Widget>? actions,
   }) : super(
           key: key,
           leading: Icon(icon),
           title: title,
           subtitle: subtitle,
           content: content,
+          actions: actions,
         );
 }
 
@@ -58,11 +63,13 @@ class DetailColorTile extends DetailTile {
     required String title,
     required String subtitle,
     String? content,
+    List<Widget>? actions,
   }) : super(
           key: key,
           leading: Icon(icon, color: color),
           title: title,
           subtitle: subtitle,
           content: content,
+          actions: actions,
         );
 }
