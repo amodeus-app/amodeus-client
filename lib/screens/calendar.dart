@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import './appointment_details.dart';
 import './search.dart';
 import '../utils/api.dart';
 import '../utils/lessons.dart';
@@ -29,23 +30,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTimeRange? _cachedRange;
 
   void _onElementClick(BuildContext context, TimetableElement el) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(el.lesson.subject.name),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(el.lesson.name, textAlign: TextAlign.left),
-            Text(el.location?.full ?? "Место не определено", textAlign: TextAlign.left),
-            Text(
-              '${DateFormat('HH:mm').format(el.start.toLocal())}–'
-              '${DateFormat('HH:mm').format(el.end.toLocal())}',
-              textAlign: TextAlign.left,
-            ),
-          ],
-        ),
-        scrollable: true,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AppointmentDetails(key: ObjectKey(el), appointment: el),
       ),
     );
   }
