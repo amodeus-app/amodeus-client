@@ -82,7 +82,7 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
           DetailColorTile(
             color: getLessonColor(widget.appointment.lesson),
             title: "Формат занятия",
-            subtitle: widget.appointment.lesson.type,
+            subtitle: getFriendlyLessonType(widget.appointment.lesson),
           ),
           DetailIconTile(
             icon: Icons.person,

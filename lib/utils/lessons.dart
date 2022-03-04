@@ -9,6 +9,38 @@ final _breakColor = Colors.grey.withOpacity(0.2);
 final _holidayColor = Colors.grey.withOpacity(0.3);
 const _heldLessonOpacity = 0.2;
 
+String getFriendlyLessonType(Lesson lesson) {
+  String type;
+  switch (lesson.type) {
+    case "SEMI":
+      type = "Практическое занятие";
+      break;
+    case "LECT":
+      type = "Лекционное занятие";
+      break;
+    case "LAB":
+      type = "Лабораторное занятие";
+      break;
+    case "CONS":
+      type = "Консультация";
+      break;
+    default:
+      switch (lesson.format) {
+        case "PRETEST":
+          type = "Зачёт";
+          break;
+        case "EXAMINATION":
+          type = "Экзамен";
+          break;
+        default:
+          assert(lesson.type != "MID_CHECK");
+          type = "Неизвестный (${lesson.type}, ${lesson.format})";
+          break;
+      }
+  }
+  return type;
+}
+
 Color getLessonColor(Lesson lesson, {bool dark = false, bool isHeld = false}) {
   Color color;
   switch (lesson.type) {
