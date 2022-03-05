@@ -1,8 +1,8 @@
-import 'package:amodeus_client/utils/update_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../screens/lockscreen.dart';
+import '../utils/update_checker.dart';
 
 class LockOverlay extends StatefulWidget {
   final Widget mainScreen;

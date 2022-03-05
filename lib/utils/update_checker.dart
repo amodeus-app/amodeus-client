@@ -3,7 +3,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 Future<String?> getNewerVersion() async {
   final client = Dio(BaseOptions(baseUrl: "https://api.github.com/"));
-  final Response<List<Map<String, dynamic>>> response;
+  final Response<List<dynamic>> response;
   try {
     response = await client.get("/repos/evgfilim1/amodeus-client/releases");
   } on DioError {
