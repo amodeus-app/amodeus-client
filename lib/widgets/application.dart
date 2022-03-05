@@ -12,7 +12,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<ThemeNotifier>(
         builder: (context, theme, _) => MaterialApp(
-          title: 'amodeus_client',
+          title: 'AModeus',
           themeMode: theme.themeMode,
           theme: ThemeNotifier.lightTheme,
           darkTheme: ThemeNotifier.darkTheme,
