@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amodeus_api/amodeus_api.dart' show TimetableElement;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +8,7 @@ import 'package:provider/provider.dart';
 import '../utils/lessons.dart';
 import '../utils/theme.dart';
 
-class LessonCard extends StatelessWidget {
+class LessonCard extends StatefulWidget {
   final Rect bounds;
   final TimetableElement element;
 
@@ -17,26 +19,48 @@ class LessonCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final cardText =
-        (bounds.width < 100) ? element.lesson.subject.nameShort : element.lesson.subject.name;
+  State<LessonCard> createState() => _LessonCardState();
+}
+
+class _LessonCardState extends State<LessonCard> {
+  var _isHeld = false;
+
+  @override
+  void initState() {
+    super.initState();
     final now = DateTime.now();
-    final isHeld = now.isAfter(element.end.toLocal());
+    final end = widget.element.end.toLocal();
+    _isHeld = now.isAfter(end);
+    if (!_isHeld) {
+      Timer(
+        end.difference(now),
+        () => setState(() {
+          _isHeld = true;
+        }),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardText = (widget.bounds.width < 100)
+        ? widget.element.lesson.subject.nameShort
+        : widget.element.lesson.subject.name;
 
     return Column(
       children: [
         Consumer<ThemeNotifier>(
           builder: (context, theme, _) => Container(
             padding: const EdgeInsets.all(3),
-            height: bounds.height,
+            height: widget.bounds.height,
             alignment: Alignment.topLeft,
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(5),
               color: getLessonColor(
-                element.lesson,
+                widget.element.lesson,
                 dark: theme.isEffectivelyDark,
-                isHeld: isHeld,
+                isHeld: _isHeld,
               ),
             ),
             child: SingleChildScrollView(
@@ -55,7 +79,7 @@ class LessonCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    element.location?.full ?? "Не определено",
+                    widget.element.location?.full ?? "Не определено",
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.normal,
@@ -74,7 +98,7 @@ class LessonCard extends StatelessWidget {
   }
 }
 
-class MonthLessonCard extends StatelessWidget {
+class MonthLessonCard extends StatefulWidget {
   final Rect bounds;
   final TimetableElement element;
 
@@ -85,23 +109,47 @@ class MonthLessonCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<MonthLessonCard> createState() => _MonthLessonCardState();
+}
+
+class _MonthLessonCardState extends State<MonthLessonCard> {
+  var _isHeld = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    final end = widget.element.end.toLocal();
+    _isHeld = now.isAfter(end);
+    if (!_isHeld) {
+      Timer(
+        end.difference(now),
+        () => setState(() {
+          _isHeld = true;
+        }),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final cardText =
-        (bounds.width < 100) ? element.lesson.subject.nameShort : element.lesson.subject.name;
-    final isDetailedMonthCard = bounds.height >= 30;
+    final cardText = (widget.bounds.width < 100)
+        ? widget.element.lesson.subject.nameShort
+        : widget.element.lesson.subject.name;
+    final isDetailedMonthCard = widget.bounds.height >= 30;
 
     return Consumer<ThemeNotifier>(
       builder: (context, theme, _) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 3),
-        height: bounds.height,
+        height: widget.bounds.height,
         alignment: Alignment.topLeft,
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(5),
           color: getLessonColor(
-            element.lesson,
+            widget.element.lesson,
             dark: theme.isEffectivelyDark,
-            isHeld: DateTime.now().isAfter(element.end.toLocal()),
+            isHeld: _isHeld,
           ),
         ),
         child: isDetailedMonthCard
@@ -116,8 +164,8 @@ class MonthLessonCard extends StatelessWidget {
                   ),
                   if (isDetailedMonthCard)
                     Text(
-                      "${DateFormat('HH:mm').format(element.start.toLocal())}–"
-                      "${DateFormat('HH:mm').format(element.end.toLocal())}",
+                      "${DateFormat('HH:mm').format(widget.element.start.toLocal())}–"
+                      "${DateFormat('HH:mm').format(widget.element.end.toLocal())}",
                       style: const TextStyle(fontSize: 12),
                     )
                 ],

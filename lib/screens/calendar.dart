@@ -38,10 +38,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _appointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
     final TimetableElement el = details.appointments.first;
-    final now = DateTime.now();
-    if (now.isBefore(el.end.toLocal())) {
-      Timer(now.difference(el.end.toLocal()), () => setState(() {}));
-    }
     if (details.isMoreAppointmentRegion) {
       return Container(
         padding: const EdgeInsets.all(3),
