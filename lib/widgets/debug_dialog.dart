@@ -12,7 +12,7 @@ class DebugDialog extends StatefulWidget {
 class _DebugDialogState extends State<DebugDialog> {
   bool? _darkTheme;
   bool _auth = false;
-  bool _weekView = false;
+  bool? _weekView;
   final _baseUrl = TextEditingController();
   final _personUuid = TextEditingController();
 
@@ -50,7 +50,7 @@ class _DebugDialogState extends State<DebugDialog> {
     storage.authEnabled.getNotNull().then((value) => setState(() {
           _auth = value;
         }));
-    storage.weekView.getNotNull().then((value) => setState(() {
+    storage.weekView.get().then((value) => setState(() {
           _weekView = value;
         }));
     storage.baseURL.get().then((value) => setState(() {
@@ -82,7 +82,7 @@ class _DebugDialogState extends State<DebugDialog> {
             _auth = value;
           }),
         ),
-        _boolTile(
+        _boolOrNullTile(
           "weekView",
           _weekView,
           (value) => setState(() {

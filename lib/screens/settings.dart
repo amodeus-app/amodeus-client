@@ -24,7 +24,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool? _authAvailable;
   bool _authEnabled = false;
-  bool _weekView = false;
+  bool? _weekView;
   PackageInfo? _info;
 
   final _localAuth = LocalAuthentication();
@@ -43,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _authAvailable = false;
       });
     });
-    storage.weekView.getNotNull().then((value) => setState(() {
+    storage.weekView.get().then((value) => setState(() {
           _weekView = value;
         }));
     PackageInfo.fromPlatform().then((value) => setState(() {
@@ -81,11 +81,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  void _toggleWeekView(bool setOn) async {
+  void _onWeekViewTap(bool? setOn) async {
     storage.weekView.set(setOn);
     setState(() {
       _weekView = setOn;
     });
+    Navigator.pop(context);
   }
 
   GestureRecognizer _launchUrlOnTap(String url) => TapGestureRecognizer()
@@ -125,11 +126,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
               ),
             ),
-          SettingsSwitchTile(
-            title: "При запуске показывать",
-            subtitle: _weekView ? "Расписание на неделю" : "Расписание на сегодня",
-            value: _weekView,
-            onTap: _toggleWeekView,
+          SettingsDialogTile(
+            context: context,
+            title: "При запуске показывать расписание",
+            subtitle: _weekView == null ? "Автоматически" : (_weekView! ? "На неделю" : "На сегодня"),
+            options: <SettingsDialogOption>[
+              SettingsDialogOption(text: "Автоматически", onTap: () => _onWeekViewTap(null)),
+              SettingsDialogOption(text: "На неделю", onTap: () => _onWeekViewTap(true)),
+              SettingsDialogOption(text: "На сегодня", onTap: () => _onWeekViewTap(false)),
+            ],
           ),
           SettingsDialogTile(
             context: context,

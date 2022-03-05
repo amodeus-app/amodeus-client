@@ -10,6 +10,7 @@ import './lesson_details.dart';
 import './search.dart';
 import '../utils/api.dart';
 import '../utils/lessons.dart';
+import '../utils/misc.dart';
 import '../utils/storage.dart' as storage;
 import '../widgets/lesson_card.dart';
 
@@ -26,6 +27,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   final _refresh = GlobalKey<RefreshIndicatorState>();
   Future<void>? _currentProgress;
   DateTimeRange? _cachedRange;
+  var _hasPreference = true;
 
   void _onElementClick(BuildContext context, TimetableElement el) {
     Navigator.push(
@@ -62,16 +64,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    storage.weekView.getNotNull().then((value) {
-      if (value) {
+    storage.weekView.get().then((value) {
+      _hasPreference = value != null;
+      if (value == true) {
         _controller.view = CalendarView.workWeek;
         _controller.displayDate = DateTime.now();
       }
+      setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_hasPreference && _controller.view != CalendarView.month) {
+      _controller.view = isMediumScreen(context) ? CalendarView.workWeek : CalendarView.day;
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text("Расписание"),

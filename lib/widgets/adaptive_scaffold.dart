@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/misc.dart';
 import '../utils/theme.dart';
-
-bool _isLargeScreen(BuildContext context) {
-  return MediaQuery.of(context).size.width >= 1240.0;
-}
 
 class AdaptiveScaffoldDestination {
   final String title;
@@ -60,7 +57,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     final theme = Provider.of<ThemeNotifier>(context);
 
     // Show a Drawer
-    if (_isLargeScreen(context)) {
+    if (isLargeScreen(context)) {
       return SafeArea(
         child: Row(
           children: [
