@@ -24,9 +24,6 @@ runs:
     - name: Set token masking
       run: echo "::add-mask::${{ inputs.token }}"
       shell: bash
-    - name: Install dependencies
-      run: sudo apt install curl jq
-      shell: bash
     - name: Send a message
       id: send-message
       run: >
