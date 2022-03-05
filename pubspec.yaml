@@ -23,17 +23,21 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   local_auth: ^1.1.7
   provider: ^6.0.0
   shared_preferences: ^2.0.7
   url_launcher: ^6.0.10
   syncfusion_flutter_calendar: ^19.2.62
+  syncfusion_localizations: ^19.2.62
   amodeus_api:
     git:
       url: https://github.com/evgfilim1/amodeus-api-client-dart
       ref: 0.1.0-alpha.2
   dio: ^4.0.4
   package_info_plus: ^1.4.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
