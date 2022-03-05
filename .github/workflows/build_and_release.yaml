@@ -41,7 +41,7 @@ jobs:
         run: flutter pub get
 
       - name: Build app for Android
-        run: flutter build apk
+        run: flutter build apk --split-per-abi
 
       - name: Build app for web
         run: flutter build web
