@@ -32,6 +32,10 @@ jobs:
         run: flutter build apk
       - name: Build app for web
         run: flutter build web
+      - name: Patch app name for web
+        run: |
+          jq -c '.app_name = "AModeus"' build/web/version.json >build/web/version.new.json
+          mv build/web/version{.new,}.json
       - name: Publish web on GitHub pages
         uses: peaceiris/actions-gh-pages@v3
         with:
