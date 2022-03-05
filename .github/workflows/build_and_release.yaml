@@ -45,6 +45,14 @@ jobs:
 
       - name: Build app for web
         run: flutter build web
+
+      - name: Rename APK files
+        run: |
+          version="$(jq -r .version build/web/version.json)"
+          for file in build/app/outputs/flutter-apk/app-*.apk; do
+            echo "$file" | sed "s/\.apk/_v$version.apk/" | xargs mv "$file"
+          done
+
       - name: Patch app name for web
         run: |
           jq -c '.app_name = "AModeus"' build/web/version.json >build/web/version.new.json
