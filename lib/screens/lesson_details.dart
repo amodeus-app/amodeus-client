@@ -7,19 +7,19 @@ import '../utils/api.dart';
 import '../utils/lessons.dart';
 import '../widgets/details_tiles.dart';
 
-class AppointmentDetails extends StatefulWidget {
-  final TimetableElement appointment;
+class LessonDetails extends StatefulWidget {
+  final TimetableElement timetableElement;
 
-  const AppointmentDetails({
+  const LessonDetails({
     Key? key,
-    required this.appointment,
+    required this.timetableElement,
   }) : super(key: key);
 
   @override
-  State<AppointmentDetails> createState() => _AppointmentDetailsState();
+  State<LessonDetails> createState() => _LessonDetailsState();
 }
 
-class _AppointmentDetailsState extends State<AppointmentDetails> {
+class _LessonDetailsState extends State<LessonDetails> {
   Iterable<String>? _team;
 
   Iterable<String> _getSortedPeopleNames(Iterable<Person> people) =>
@@ -27,10 +27,10 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
 
   Future<Iterable<String>> _fetchTeam() async {
     final api = (await getApi()).getTimetableApi();
-    final res = await api.getEventTeam(eventId: widget.appointment.id);
+    final res = await api.getEventTeam(eventId: widget.timetableElement.id);
     // Remove teachers from team list
-    return _getSortedPeopleNames(
-        res.data!.where((p) => widget.appointment.teachers.indexWhere((t) => t.id == p.id) == -1));
+    return _getSortedPeopleNames(res.data!
+        .where((p) => widget.timetableElement.teachers.indexWhere((t) => t.id == p.id) == -1));
   }
 
   @override
@@ -43,7 +43,7 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final teachers = _getSortedPeopleNames(widget.appointment.teachers).toList();
+    final teachers = _getSortedPeopleNames(widget.timetableElement.teachers).toList();
     final teachersMore = ", ещё ${teachers.length - 1}…";
     final teachersSubtitle = "${teachers[0]} ${teachers.length > 1 ? teachersMore : ""}";
     final teachersFull = teachers.join(",\n");
@@ -59,7 +59,7 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
 
     var location = "Место не определено";
     var locationFull = location;
-    final locationObj = widget.appointment.location;
+    final locationObj = widget.timetableElement.location;
     if (locationObj != null) {
       var buildingExtra = "";
       final building = locationObj.building;
@@ -77,7 +77,7 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.appointment.lesson.subject.name,
+          widget.timetableElement.lesson.subject.name,
           softWrap: false,
           maxLines: 1,
           overflow: TextOverflow.fade,
@@ -88,7 +88,7 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
           DetailIconTile(
             icon: Icons.topic,
             title: "Тема занятия",
-            subtitle: widget.appointment.lesson.name,
+            subtitle: widget.timetableElement.lesson.name,
           ),
           DetailIconTile(
             icon: Icons.place,
@@ -108,14 +108,14 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
           DetailIconTile(
             icon: Icons.access_time,
             title: "Время",
-            subtitle: '${DateFormat('HH:mm').format(widget.appointment.start.toLocal())}–'
-                '${DateFormat('HH:mm').format(widget.appointment.end.toLocal())}',
+            subtitle: '${DateFormat('HH:mm').format(widget.timetableElement.start.toLocal())}–'
+                '${DateFormat('HH:mm').format(widget.timetableElement.end.toLocal())}',
             content: null,
           ),
           DetailColorTile(
-            color: getLessonColor(widget.appointment.lesson),
+            color: getLessonColor(widget.timetableElement.lesson),
             title: "Формат занятия",
-            subtitle: getFriendlyLessonType(widget.appointment.lesson),
+            subtitle: getFriendlyLessonType(widget.timetableElement.lesson),
             content: null,
           ),
           DetailIconTile(

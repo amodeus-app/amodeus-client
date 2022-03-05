@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import './appointment_details.dart';
+import './lesson_details.dart';
 import './search.dart';
 import '../utils/api.dart';
 import '../utils/lessons.dart';
@@ -33,7 +33,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AppointmentDetails(key: ObjectKey(el), appointment: el),
+        builder: (context) => LessonDetails(key: ObjectKey(el), timetableElement: el),
       ),
     );
   }
