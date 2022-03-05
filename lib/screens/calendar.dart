@@ -4,8 +4,6 @@ import 'package:amodeus_api/amodeus_api.dart' show TimetableElement;
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import './lesson_details.dart';
@@ -13,7 +11,7 @@ import './search.dart';
 import '../utils/api.dart';
 import '../utils/lessons.dart';
 import '../utils/storage.dart' as storage;
-import '../utils/theme.dart';
+import '../widgets/lesson_card.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -40,11 +38,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _appointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
     final TimetableElement el = details.appointments.first;
-    var cardText =
-        (details.bounds.width < 100) ? el.lesson.subject.nameShort : el.lesson.subject.name;
     final now = DateTime.now();
-    final isHeld = now.isAfter(el.end.toLocal());
-    if (!isHeld) {
+    if (now.isBefore(el.end.toLocal())) {
       Timer(now.difference(el.end.toLocal()), () => setState(() {}));
     }
     if (details.isMoreAppointmentRegion) {
@@ -63,96 +58,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       );
     }
     if (_controller.view != CalendarView.month) {
-      return Column(
-        children: [
-          Consumer<ThemeNotifier>(
-            builder: (context, theme, _) => Container(
-              padding: const EdgeInsets.all(3),
-              height: details.bounds.height,
-              alignment: Alignment.topLeft,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5),
-                color: getLessonColor(
-                  el.lesson,
-                  dark: theme.isEffectivelyDark,
-                  isHeld: isHeld,
-                ),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      cardText,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      maxLines: 3,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      el.location?.full ?? "Не определено",
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      maxLines: 3,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
+      return LessonCard(element: el, bounds: details.bounds);
     }
-    final isDetailedMonthCard = details.bounds.height >= 30;
-    return Consumer<ThemeNotifier>(
-      builder: (context, theme, _) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 3),
-        height: details.bounds.height,
-        alignment: Alignment.topLeft,
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(5),
-          color: getLessonColor(
-            el.lesson,
-            dark: theme.isEffectivelyDark,
-            isHeld: DateTime.now().isAfter(el.end.toLocal()),
-          ),
-        ),
-        child: isDetailedMonthCard
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    cardText,
-                    style: TextStyle(fontSize: !isDetailedMonthCard ? 10 : null),
-                    overflow: TextOverflow.fade,
-                    maxLines: 2,
-                  ),
-                  if (isDetailedMonthCard)
-                    Text(
-                      "${DateFormat('HH:mm').format(el.start.toLocal())}–"
-                      "${DateFormat('HH:mm').format(el.end.toLocal())}",
-                      style: const TextStyle(fontSize: 12),
-                    )
-                ],
-              )
-            : Text(
-                cardText,
-                style: const TextStyle(fontSize: 10),
-                overflow: TextOverflow.clip,
-                maxLines: 1,
-              ),
-      ),
-    );
+    return MonthLessonCard(element: el, bounds: details.bounds);
   }
 
   @override
